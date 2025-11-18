@@ -54,12 +54,13 @@ export function LevelModal({ level, isOpen, onOpenChange }: LevelModalProps) {
             <div className="space-y-4">
               {levelImages.length > 0 && (
                 <div className="relative w-full h-64 rounded-lg overflow-hidden my-4">
-         <img
-  src={levelImages[0].imageUrl}
-  alt={levelImages[0].description}
-  data-ai-hint={levelImages[0].imageHint}
-  className="object-cover w-full h-full"
-/>
+                {  <Image
+                    src={levelImages[0].imageUrl}
+                    alt={levelImages[0].description}
+                    data-ai-hint={levelImages[0].imageHint}
+                    fill
+                    className="object-cover"
+                  />}
                 </div>
               )}
               <p className="text-lg whitespace-pre-wrap leading-relaxed">{level.full_content}</p>
