@@ -8,18 +8,10 @@ import { Progress } from './ui/progress';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { cn } from '@/lib/utils';
-import { CheckCircle, XCircle, Award, Target, BookOpen, Loader2 } from 'lucide-react';
+import { CheckCircle, XCircle, Award, Target, BookOpen } from 'lucide-react';
 import { useProgress } from '@/context/progress-context';
 import type { Level } from '@/lib/data';
-import { generateQuestionsAction } from '@/actions/ai';
-
-type Question = {
-  question: string;
-  options: string[];
-  correctOptionIndex: number;
-  explanation: string;
-  difficulty: string;
-};
+import { quizData, type Question } from '@/lib/quiz-data';
 
 type QuizProps = {
   level: Level;
@@ -35,44 +27,20 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
   const [score, setScore] = useState(0);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const { completeLevel } = useProgress();
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      setIsLoading(true);
-      setError(null);
-      setQuestions([]);
-
-      const formData = new FormData();
-      formData.append('levelContent', level.full_content);
-      formData.append('levelTitle', level.title);
-      
-      try {
-        const result = await generateQuestionsAction(null, formData);
-        
-        if (result.questions && result.questions.length > 0) {
-          setQuestions(result.questions.slice(0, 5));
-        } else {
-          setError(result.message || 'Failed to generate quiz questions.');
-        }
-      } catch (e) {
-        setError('An unexpected error occurred while generating the quiz.');
-        console.error(e);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    // Load predefined questions for the current level
+    const levelQuestions = quizData[level.id] || [];
+    setQuestions(levelQuestions);
     
-    fetchQuestions();
-    
+    // Reset quiz state when level changes
     setCurrentQuestionIndex(0);
     setSelectedOption(null);
     setScore(0);
     setIsAnswered(false);
     setIsFinished(false);
-  }, [level.id, level.full_content, level.title]);
+  }, [level.id]);
 
   const currentQuestion = questions[currentQuestionIndex];
   const progress = questions.length > 0 ? ((currentQuestionIndex) / questions.length) * 100 : 0;
@@ -84,8 +52,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      const finalScore = selectedOption === currentQuestion.correctOptionIndex ? score + 1 : score;
-      const percentage = (finalScore / questions.length) * 100;
+      const percentage = (score / questions.length) * 100;
       completeLevel(level.id, percentage);
       setIsFinished(true);
     }
@@ -99,16 +66,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
     }
   };
   
-  if (isLoading) {
-    return (
-        <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-            <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-            <p className="text-muted-foreground">Generating your personalized quiz...</p>
-        </div>
-    );
-  }
-
-  if (error || !questions || questions.length === 0) {
+  if (!questions || questions.length === 0) {
     return (
         <div className="flex items-center justify-center h-full p-6">
             <Card className="text-center">
@@ -116,7 +74,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
                     <CardTitle>Quiz Not Available</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p>{error || "We couldn't generate questions for this level right now. Please try again later!"}</p>
+                    <p>{"We're sorry, but there are no questions for this level yet."}</p>
                 </CardContent>
                 <CardFooter>
                     <Button onClick={onQuizComplete} className="w-full">Back to Content</Button>
@@ -196,7 +154,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
           </CardContent>
 
           {isAnswered && (
-            <CardFooter className="flex-col items-start pt-4">
+             <CardFooter className="flex-col items-start pt-4">
                <Alert className="w-full">
                   <AlertTitle className={cn(selectedOption === currentQuestion.correctOptionIndex ? 'text-green-600' : 'text-destructive')}>
                     {selectedOption === currentQuestion.correctOptionIndex ? 'Correct!' : 'Not Quite!'}
