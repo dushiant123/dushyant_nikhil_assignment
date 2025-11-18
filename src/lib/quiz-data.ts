@@ -77,14 +77,3 @@ export const quizData: Record<string, Question[]> = {
     }
   ]
 };
-
-// Function to get a random subset of questions for a level
-export function getRandomQuestions(levelId: string, count: number): Question[] {
-  const levelQuestions = quizData[levelId] || [];
-  if (levelQuestions.length <= count) {
-    return levelQuestions;
-  }
-  
-  const shuffled = [...levelQuestions].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
-}

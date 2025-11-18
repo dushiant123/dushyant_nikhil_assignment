@@ -7,18 +7,25 @@ import { Label } from './ui/label';
 import { Progress } from './ui/progress';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
-import { getRandomQuestions, type Question } from '@/lib/quiz-data';
 import { cn } from '@/lib/utils';
-import { CheckCircle, XCircle, Award, Target, BookOpen } from 'lucide-react';
+import { CheckCircle, XCircle, Award, Target, BookOpen, Loader2 } from 'lucide-react';
 import { useProgress } from '@/context/progress-context';
 import type { Level } from '@/lib/data';
+import { generateQuestionsAction } from '@/actions/ai';
+
+type Question = {
+  question: string;
+  options: string[];
+  correctOptionIndex: number;
+  explanation: string;
+  difficulty: string;
+};
 
 type QuizProps = {
   level: Level;
   onQuizComplete: () => void;
 };
 
-const QUIZ_LENGTH = 5;
 const PASS_PERCENTAGE = 0; // Allow pass regardless of score
 
 export function Quiz({ level, onQuizComplete }: QuizProps) {
@@ -28,20 +35,50 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
   const [score, setScore] = useState(0);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { completeLevel } = useProgress();
 
   useEffect(() => {
-    setQuestions(getRandomQuestions(level.id, QUIZ_LENGTH));
+    const fetchQuestions = async () => {
+      setIsLoading(true);
+      setError(null);
+      setQuestions([]);
+
+      const formData = new FormData();
+      formData.append('levelContent', level.full_content);
+      formData.append('levelTitle', level.title);
+      
+      try {
+        // We are not using useFormState here, so we pass null for prevState
+        const result = await generateQuestionsAction(null, formData);
+        
+        if (result.questions && result.questions.length > 0) {
+          // Take the first 5 questions if more are generated
+          setQuestions(result.questions.slice(0, 5));
+        } else {
+          setError(result.message || 'Failed to generate quiz questions.');
+        }
+      } catch (e) {
+        setError('An unexpected error occurred while generating the quiz.');
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchQuestions();
+    
     // Reset state when level changes
     setCurrentQuestionIndex(0);
     setSelectedOption(null);
     setScore(0);
     setIsAnswered(false);
     setIsFinished(false);
-  }, [level.id]);
+  }, [level.id, level.full_content, level.title]);
 
   const currentQuestion = questions[currentQuestionIndex];
-  const progress = ((currentQuestionIndex) / questions.length) * 100;
+  const progress = questions.length > 0 ? ((currentQuestionIndex) / questions.length) * 100 : 0;
 
   const handleAnswerSubmit = () => {
     if (selectedOption === null) return;
@@ -52,28 +89,34 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
   };
 
   const handleNextQuestion = () => {
-    if (!isFinished) {
-        const percentage = (score / questions.length) * 100;
-        if(currentQuestionIndex === questions.length - 1) {
+    if (isAnswered) {
+        const isLastQuestion = currentQuestionIndex === questions.length - 1;
+        
+        if (isLastQuestion) {
+            setIsFinished(true);
+            const finalScore = selectedOption === currentQuestion.correctOptionIndex ? score + 1 : score;
+            const percentage = (finalScore / questions.length) * 100;
             completeLevel(level.id, percentage);
+        } else {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+            setSelectedOption(null);
+            setIsAnswered(false);
         }
-    }
-    
-    if (currentQuestionIndex < questions.length - 1) {
-      setSelectedOption(null);
-      setIsAnswered(false);
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      setIsFinished(true);
-      // Ensure level is marked complete on the last question if not already
-      if (!isFinished) {
-        const percentage = (score / questions.length) * 100;
-        completeLevel(level.id, percentage);
-      }
+        handleAnswerSubmit();
     }
   };
   
-  if (questions.length === 0) {
+  if (isLoading) {
+    return (
+        <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+            <p className="text-muted-foreground">Generating your personalized quiz...</p>
+        </div>
+    );
+  }
+
+  if (error || !questions || questions.length === 0) {
     return (
         <div className="flex items-center justify-center h-full p-6">
             <Card className="text-center">
@@ -81,7 +124,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
                     <CardTitle>Quiz Not Available</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p>We're still preparing the questions for this level. Please check back later!</p>
+                    <p>{error || "We couldn't generate questions for this level right now. Please try again later!"}</p>
                 </CardContent>
                 <CardFooter>
                     <Button onClick={onQuizComplete} className="w-full">Back to Content</Button>
@@ -121,18 +164,18 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
 
   return (
     <div className="flex flex-col h-full p-6">
-      <Progress value={progress} className="mb-4" />
-      <p className="text-sm text-muted-foreground mb-4 text-center">Question {currentQuestionIndex + 1} of {questions.length}</p>
-      
       <div className="flex-1 flex flex-col min-h-0">
+        <Progress value={progress} className="mb-2" />
+        <p className="text-sm text-muted-foreground mb-4 text-center">Question {currentQuestionIndex + 1} of {questions.length}</p>
+        
         <Card className="flex-1 flex flex-col">
           <CardHeader>
               <CardTitle className="text-xl md:text-2xl leading-relaxed">{currentQuestion.question}</CardTitle>
           </CardHeader>
           <CardContent className="flex-1">
             <RadioGroup
-              key={currentQuestionIndex} // Add key to force re-render
-              value={selectedOption?.toString()}
+              key={currentQuestionIndex} // This is crucial to reset the state for each question
+              value={selectedOption !== null ? selectedOption.toString() : ''}
               onValueChange={(value) => !isAnswered && setSelectedOption(parseInt(value))}
               className="space-y-4"
             >
@@ -161,27 +204,25 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
           </CardContent>
 
           {isAnswered && (
-            <CardFooter className="flex-col items-start">
+            <CardFooter className="flex-col items-start pt-4">
                <Alert className="w-full">
                   <AlertTitle className={cn(selectedOption === currentQuestion.correctOptionIndex ? 'text-green-600' : 'text-destructive')}>
                     {selectedOption === currentQuestion.correctOptionIndex ? 'Correct!' : 'Not Quite!'}
                   </AlertTitle>
-                  <AlertDescription>{currentQuestion.explanation}</AlertDescription>
-              </Alert>
+                  <AlertDescription>
+                    {currentQuestion.explanation}
+                  </AlertDescription>
+                </Alert>
             </CardFooter>
           )}
         </Card>
-      
-        <div className="mt-4 flex justify-end shrink-0">
-          {!isAnswered ? (
-            <Button onClick={handleAnswerSubmit} disabled={selectedOption === null}>Check Answer</Button>
-          ) : (
-            <Button onClick={handleNextQuestion}>
-              {currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
-            </Button>
-          )}
-        </div>
       </div>
+
+       <div className="mt-4 flex justify-end">
+            <Button onClick={handleNextQuestion} disabled={selectedOption === null && !isAnswered}>
+            {isAnswered ? (currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question') : 'Submit Answer'}
+            </Button>
+        </div>
     </div>
   );
 }
