@@ -52,19 +52,24 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
   };
 
   const handleNextQuestion = () => {
-    // This completes the level as soon as one question is answered.
-    // To complete after the whole quiz, move this to the `else` block below.
     if (!isFinished) {
         const percentage = (score / questions.length) * 100;
-        completeLevel(level.id, percentage);
+        if(currentQuestionIndex === questions.length - 1) {
+            completeLevel(level.id, percentage);
+        }
     }
-
+    
     if (currentQuestionIndex < questions.length - 1) {
       setSelectedOption(null);
       setIsAnswered(false);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setIsFinished(true);
+      // Ensure level is marked complete on the last question if not already
+      if (!isFinished) {
+        const percentage = (score / questions.length) * 100;
+        completeLevel(level.id, percentage);
+      }
     }
   };
   
@@ -126,6 +131,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
           </CardHeader>
           <CardContent className="flex-1">
             <RadioGroup
+              key={currentQuestionIndex} // Add key to force re-render
               value={selectedOption?.toString()}
               onValueChange={(value) => !isAnswered && setSelectedOption(parseInt(value))}
               className="space-y-4"
@@ -166,7 +172,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
           )}
         </Card>
       
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex justify-end shrink-0">
           {!isAnswered ? (
             <Button onClick={handleAnswerSubmit} disabled={selectedOption === null}>Check Answer</Button>
           ) : (
