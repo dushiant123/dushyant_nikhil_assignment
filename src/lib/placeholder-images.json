@@ -3,7 +3,7 @@
     {
       "id": "welcomeBackground",
       "description": "A panoramic view of a vibrant Rajasthani village at sunset, serving as the main interactive map.",
-      "imageUrl": "https://images.unsplash.com/photo-1544625345-1cba57903524?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageUrl": "https://images.unsplash.com/photo-1603803130541-335b754b6f14?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "imageHint": "rajasthan desert night"
     },
     {
@@ -21,31 +21,31 @@
     {
       "id": "level2_history",
       "description": "An old, artistic depiction of nomadic travel in the desert.",
-      "imageUrl": "https://images.unsplash.com/photo-1750859876385-c7c9acd92233?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxkZXNlcnQlMjBub21hZHN8ZW58MHx8fHwxNzYzNDgyMzAwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1750859876385-c7c9acd92233?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxkZXNlcnQlMjBub21hZHN8ZW58MHx8fHwxNzYzNDgyMzAwfDA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "desert nomads"
     },
     {
       "id": "level3_dance",
       "description": "A Kalbeliya dancer captured mid-spin, her black skirt swirling.",
-      "imageUrl": "https://images.unsplash.com/photo-1681731030450-197c0ece5c3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxyYWphc3RoYW5pJTIwZGFuY2V8ZW58MHx8fHwxNzYzNDgyMzAxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1681731030450-197c0ece5c3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxyYWphc3RoYW5pJTIwZGFuY2V8ZW58MHx8fHwxNzYzNDgyMzAxfDA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "rajasthani dance"
     },
     {
       "id": "level4_snake",
       "description": "A traditional snake charmer playing the 'been' instrument.",
-      "imageUrl": "https://images.unsplash.com/photo-1724497397775-fc894817cce0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzbmFrZSUyMGNoYXJtZXJ8ZW58MHx8fHwxNzYzNDgwNzMzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1724497397775-fc894817cce0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzbmFrZSUyMGNoYXJtZXJ8ZW58MHx8fHwxNzYzNDgwNzMzfDA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "snake charmer"
     },
     {
       "id": "level5_costume",
       "description": "A close-up of the intricate mirror work on a Kalbeliya costume.",
-      "imageUrl": "https://images.unsplash.com/photo-1512676052261-98bab4919138?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxpbmRpYW4lMjBlbWJyb2lkZXJ5fGVufDB8fHx8MTc2MzQ4MjMwMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1512676052261-98bab4919138?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxpbmRpYW4lMjBlbWJyb2lkZXJ5fGVufDB8fHx8MTc2MzQ4MjMwMHww&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "indian embroidery"
     },
     {
       "id": "level6_instruments",
       "description": "A collection of traditional Kalbeliya musical instruments.",
-      "imageUrl": "https://images.unsplash.com/photo-1630764883048-ed371da9ce4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxpbmRpYW4lMjBpbnN0cnVtZW50c3xlbnwwfHx8fDE3NjM0ODIzMDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1630764883048-ed371da9ce4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxpbmRpYW4lMjBpbnN0cnVtZW50c3xlbnwwfHx8fDE3NjM0ODIzMDF8MA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "indian instruments"
     },
     {
