@@ -1,43 +1,40 @@
 'use client';
 
-import { useState } from 'react';
-import { VillageMap } from '@/components/village-map';
-import { LevelModal } from '@/components/level-modal';
-import { allLevels, type Level } from '@/lib/data';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { ArrowRight } from 'lucide-react';
 
-export default function Home() {
-  const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
-
-  const handleSelectLevel = (levelId: string) => {
-    const level = allLevels.find(l => l.id === levelId);
-    if (level) {
-      setSelectedLevel(level);
-    }
-  };
-
-  const handleCloseModal = () => {
-    setSelectedLevel(null);
-  };
+export default function WelcomePage() {
+  const bgImage = PlaceHolderImages.find((img) => img.id === 'villageMap');
 
   return (
-    <div className="relative h-[calc(100vh-4rem)] w-full">
-      <VillageMap onSelectLevel={handleSelectLevel} />
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/40 text-center text-white p-8 pointer-events-none">
-          <h1 className="text-4xl md:text-6xl font-headline mb-4 font-bold drop-shadow-lg animate-fade-in-down">Welcome to Rajasthan Roots</h1>
-          <p className="text-lg md:text-xl max-w-2xl drop-shadow-md animate-fade-in-up">An interactive journey into the world of the Kalbeliya. Click on a landmark to begin your exploration.</p>
-      </div>
-
-      {selectedLevel && (
-        <LevelModal
-          level={selectedLevel}
-          isOpen={!!selectedLevel}
-          onOpenChange={(open) => {
-            if (!open) {
-              handleCloseModal();
-            }
-          }}
+    <div className="relative flex h-[calc(100vh-4rem)] w-full flex-col items-center justify-center p-8 text-center">
+      {bgImage && (
+        <Image
+          src={bgImage.imageUrl}
+          alt={bgImage.description}
+          data-ai-hint={bgImage.imageHint}
+          fill
+          priority
+          className="object-cover"
         />
       )}
+      <div className="absolute inset-0 z-10 bg-black/50" />
+      <div className="relative z-20 flex flex-col items-center text-white">
+        <h1 className="text-4xl font-bold drop-shadow-lg md:text-6xl font-headline mb-4 animate-fade-in-down">
+          Welcome to the Journey into the world of Kalbeliya
+        </h1>
+        <div className="animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+            <Button asChild size="lg" className="mt-8">
+            <Link href="/explore">
+                Click on this to start the journey
+                <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+            </Button>
+        </div>
+      </div>
     </div>
   );
 }
