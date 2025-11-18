@@ -1,38 +1,35 @@
-name: Deploy to VPS (Nginx + PM2)
+name: Deploy Static Site
+
 on:
   push:
     branches:
-      - main
+      - main   # Deploy every time main is pushed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source code
         uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build Next.js
+      - name: Build project
         run: npm run build
 
-      - name: Copy files to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "."
-          target: "/var/www/nextapp"
+      - name: Export static files (Next.js)
+        run: npm run export    # outputs to ./out
 
-      - name: Restart app on server
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd /var/www/nextapp
-            pm2 restart nextapp || pm2 start npm --name "nextapp" -- start
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+          publish_branch: gh-pages
