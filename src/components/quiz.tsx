@@ -46,14 +46,13 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
   };
 
   const handleNextQuestion = () => {
-    setSelectedOption(null);
-    setIsAnswered(false);
     if (currentQuestionIndex < questions.length - 1) {
+      setSelectedOption(null);
+      setIsAnswered(false);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setIsFinished(true);
-      const finalScore = selectedOption === currentQuestion.correctOptionIndex ? score + 1 : score;
-      const percentage = (finalScore / questions.length) * 100;
+      const percentage = (score / questions.length) * 100;
       if (percentage >= PASS_PERCENTAGE) {
         completeLevel(level.id, percentage);
       }
