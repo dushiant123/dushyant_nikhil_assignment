@@ -20,7 +20,7 @@ type LevelModalProps = {
 export function LevelModal({ level, isOpen, onOpenChange }: LevelModalProps) {
   const [view, setView] = useState<'content' | 'quiz'>('content');
 
-  const levelImages: ImagePlaceholder[] = level.images
+  const levelImages: ImagePlaceholder[] = level?.images
     .map((id) => PlaceHolderImages.find((img) => img.id === id))
     .filter((img): img is ImagePlaceholder => !!img);
   
@@ -54,19 +54,18 @@ export function LevelModal({ level, isOpen, onOpenChange }: LevelModalProps) {
             <div className="space-y-4">
               {levelImages.length > 0 && (
                 <div className="relative w-full h-64 rounded-lg overflow-hidden my-4">
-                  <Image
+                {  <Image
                     src={levelImages[0].imageUrl}
                     alt={levelImages[0].description}
                     data-ai-hint={levelImages[0].imageHint}
                     fill
                     className="object-cover"
-                  />
+                  />}
                 </div>
               )}
               <p className="text-lg whitespace-pre-wrap leading-relaxed">{level.full_content}</p>
               
-              <SummaryGenerator levelContent={level.full_content} levelTitle={level.title} />
-
+             
               <div className="flex justify-end gap-4 pt-4">
                 <Button variant="outline" onClick={() => onOpenChange(false)}><BookOpen className="mr-2"/> Back to Map</Button>
                 <Button onClick={() => setView('quiz')}><BrainCircuit className="mr-2"/> Start Quiz</Button>

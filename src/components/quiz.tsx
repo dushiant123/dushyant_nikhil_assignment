@@ -153,18 +153,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
             </RadioGroup>
           </CardContent>
 
-          {isAnswered && (
-             <CardFooter className="flex-col items-start pt-4">
-               <Alert className="w-full">
-                  <AlertTitle className={cn(selectedOption === currentQuestion.correctOptionIndex ? 'text-green-600' : 'text-destructive')}>
-                    {selectedOption === currentQuestion.correctOptionIndex ? 'Correct!' : 'Not Quite!'}
-                  </AlertTitle>
-                  <AlertDescription>
-                    {currentQuestion.explanation}
-                  </AlertDescription>
-                </Alert>
-            </CardFooter>
-          )}
+         
         </Card>
       </div>
 
