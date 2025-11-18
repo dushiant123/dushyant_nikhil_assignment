@@ -50,11 +50,9 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
       formData.append('levelTitle', level.title);
       
       try {
-        // We are not using useFormState here, so we pass null for prevState
         const result = await generateQuestionsAction(null, formData);
         
         if (result.questions && result.questions.length > 0) {
-          // Take the first 5 questions if more are generated
           setQuestions(result.questions.slice(0, 5));
         } else {
           setError(result.message || 'Failed to generate quiz questions.');
@@ -69,7 +67,6 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
     
     fetchQuestions();
     
-    // Reset state when level changes
     setCurrentQuestionIndex(0);
     setSelectedOption(null);
     setScore(0);
@@ -80,30 +77,25 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
   const currentQuestion = questions[currentQuestionIndex];
   const progress = questions.length > 0 ? ((currentQuestionIndex) / questions.length) * 100 : 0;
 
+  const handleNextQuestion = () => {
+    setIsAnswered(false);
+    setSelectedOption(null);
+
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      const finalScore = selectedOption === currentQuestion.correctOptionIndex ? score + 1 : score;
+      const percentage = (finalScore / questions.length) * 100;
+      completeLevel(level.id, percentage);
+      setIsFinished(true);
+    }
+  };
+
   const handleAnswerSubmit = () => {
     if (selectedOption === null) return;
     setIsAnswered(true);
     if (selectedOption === currentQuestion.correctOptionIndex) {
       setScore(score + 1);
-    }
-  };
-
-  const handleNextQuestion = () => {
-    if (isAnswered) {
-        const isLastQuestion = currentQuestionIndex === questions.length - 1;
-        
-        if (isLastQuestion) {
-            setIsFinished(true);
-            const finalScore = selectedOption === currentQuestion.correctOptionIndex ? score + 1 : score;
-            const percentage = (finalScore / questions.length) * 100;
-            completeLevel(level.id, percentage);
-        } else {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
-            setSelectedOption(null);
-            setIsAnswered(false);
-        }
-    } else {
-        handleAnswerSubmit();
     }
   };
   
@@ -174,7 +166,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
           </CardHeader>
           <CardContent className="flex-1">
             <RadioGroup
-              key={currentQuestionIndex} // This is crucial to reset the state for each question
+              key={currentQuestionIndex}
               value={selectedOption !== null ? selectedOption.toString() : ''}
               onValueChange={(value) => !isAnswered && setSelectedOption(parseInt(value))}
               className="space-y-4"
@@ -219,7 +211,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
       </div>
 
        <div className="mt-4 flex justify-end">
-            <Button onClick={handleNextQuestion} disabled={selectedOption === null && !isAnswered}>
+            <Button onClick={isAnswered ? handleNextQuestion : handleAnswerSubmit} disabled={selectedOption === null}>
             {isAnswered ? (currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question') : 'Submit Answer'}
             </Button>
         </div>

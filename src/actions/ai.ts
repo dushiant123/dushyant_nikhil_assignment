@@ -44,14 +44,16 @@ export async function generateQuestionsAction(prevState: any, formData: FormData
 
     if (!validatedFields.success) {
         return {
+            questions: null,
             message: 'Invalid content or title provided.',
         };
     }
 
     try {
         const result = await generateQuizQuestions(validatedFields.data);
-        return { questions: result.questions };
+        return { questions: result.questions, message: null };
     } catch (error) {
-        return { message: 'An error occurred while generating questions.' };
+        console.error('Error generating questions:', error);
+        return { questions: null, message: 'An error occurred while generating questions.' };
     }
 }
