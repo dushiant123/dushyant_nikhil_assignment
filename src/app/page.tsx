@@ -7,7 +7,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight } from 'lucide-react';
 
 export default function WelcomePage() {
-  const bgImage = PlaceHolderImages.find((img) => img.id === 'villageMap');
+  const bgImage = PlaceHolderImages.find((img) => img.id === 'welcomeBackground');
 
   return (
     <div className="relative flex h-[calc(100vh-4rem)] w-full flex-col items-center justify-center p-8 text-center">

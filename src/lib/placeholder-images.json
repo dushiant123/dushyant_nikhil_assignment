@@ -1,10 +1,16 @@
 {
   "placeholderImages": [
     {
-      "id": "villageMap",
+      "id": "welcomeBackground",
       "description": "A panoramic view of a vibrant Rajasthani village at sunset, serving as the main interactive map.",
       "imageUrl": "https://images.unsplash.com/photo-1588261393994-d427a1470487?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "imageHint": "rajasthan desert camel"
+    },
+    {
+      "id": "villageMap",
+      "description": "An artistic and stylized map of a Rajasthani village, for the explore page.",
+      "imageUrl": "https://storage.googleapis.com/gemini-studio-assets/rajasthan-roots/map.jpeg",
+      "imageHint": "rajasthan village map"
     },
     {
       "id": "level1_portrait",
