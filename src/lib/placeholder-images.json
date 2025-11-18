@@ -3,8 +3,8 @@
     {
       "id": "villageMap",
       "description": "A panoramic view of a vibrant Rajasthani village at sunset, serving as the main interactive map.",
-      "imageUrl": "https://images.unsplash.com/photo-1518005373398-de362a2a4920?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyYWphc3RoYW4lMjBkZXNlcnQlMjBjYW1lbCUyMHN1bnNldHxlbnwwfHx8fDE3NzE0NTgyNTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "rajasthan desert"
+      "imageUrl": "https://images.unsplash.com/photo-1544635134-a7a58e0d6c40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxyYWphc3RoYW4lMjBkZXNlcnQlMjBjYW1lbCUyMHN1bnNldHxlbnwwfHx8fDE3NzE0NTgyNTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "rajasthan desert sunset"
     },
     {
       "id": "level1_portrait",
