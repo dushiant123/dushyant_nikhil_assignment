@@ -46,7 +46,7 @@ export function VillageMap({ onSelectLevel }: VillageMapProps) {
             <LevelHotspot
               key={level.id}
               level={level}
-              position={hotspotPositions[index]}
+              position={hotspotPositions[index % hotspotPositions.length]}
               isCompleted={isCompleted}
               isUnlocked={isUnlocked}
               onSelect={onSelectLevel}

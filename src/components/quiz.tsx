@@ -19,7 +19,7 @@ type QuizProps = {
 };
 
 const QUIZ_LENGTH = 5;
-const PASS_PERCENTAGE = 70;
+const PASS_PERCENTAGE = 0; // Allow pass regardless of score
 
 export function Quiz({ level, onQuizComplete }: QuizProps) {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -32,6 +32,12 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
 
   useEffect(() => {
     setQuestions(getRandomQuestions(level.id, QUIZ_LENGTH));
+    // Reset state when level changes
+    setCurrentQuestionIndex(0);
+    setSelectedOption(null);
+    setScore(0);
+    setIsAnswered(false);
+    setIsFinished(false);
   }, [level.id]);
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -46,14 +52,19 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
   };
 
   const handleNextQuestion = () => {
+    // This completes the level as soon as one question is answered.
+    // To complete after the whole quiz, move this to the `else` block below.
+    if (!isFinished) {
+        const percentage = (score / questions.length) * 100;
+        completeLevel(level.id, percentage);
+    }
+
     if (currentQuestionIndex < questions.length - 1) {
       setSelectedOption(null);
       setIsAnswered(false);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setIsFinished(true);
-      const percentage = (score / questions.length) * 100;
-      completeLevel(level.id, percentage);
     }
   };
   
@@ -85,12 +96,12 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
         <Card className="w-full max-w-md">
             <CardHeader>
                 {passed ? <Award className="mx-auto h-16 w-16 text-green-500" /> : <Target className="mx-auto h-16 w-16 text-destructive" />}
-                <CardTitle className="text-2xl font-headline">{passed ? "Level Complete!" : "Try Again!"}</CardTitle>
+                <CardTitle className="text-2xl font-headline">{passed ? "Level Complete!" : "Good Effort!"}</CardTitle>
             </CardHeader>
             <CardContent>
                 <p className="text-4xl font-bold">{Math.round(finalScorePercentage)}%</p>
                 <p className="text-muted-foreground">You answered {score} out of {questions.length} questions correctly.</p>
-                <p className="mt-4">{passed ? "Great job! You've unlocked new knowledge." : `You need ${PASS_PERCENTAGE}% to pass, but you can continue exploring.`}</p>
+                <p className="mt-4">{passed ? "Great job! You've unlocked the next level." : `You can continue exploring the map.`}</p>
             </CardContent>
             <CardFooter>
                 <Button onClick={onQuizComplete} className="w-full">
@@ -108,60 +119,62 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
       <Progress value={progress} className="mb-4" />
       <p className="text-sm text-muted-foreground mb-4 text-center">Question {currentQuestionIndex + 1} of {questions.length}</p>
       
-      <Card className="flex-1 flex flex-col">
-        <CardHeader>
-            <CardTitle className="text-xl md:text-2xl leading-relaxed">{currentQuestion.question}</CardTitle>
-        </CardHeader>
-        <CardContent className="flex-1">
-          <RadioGroup
-            value={selectedOption?.toString()}
-            onValueChange={(value) => !isAnswered && setSelectedOption(parseInt(value))}
-            className="space-y-4"
-          >
-            {currentQuestion.options.map((option, index) => {
-              const isCorrect = index === currentQuestion.correctOptionIndex;
-              const isSelected = index === selectedOption;
-              return (
-                <Label
-                  key={index}
-                  htmlFor={`option-${index}`}
-                  className={cn(
-                    "flex items-center space-x-4 rounded-md border p-4 transition-all",
-                    isAnswered && isCorrect ? 'border-green-500 bg-green-500/10' : '',
-                    isAnswered && isSelected && !isCorrect ? 'border-destructive bg-destructive/10' : '',
-                    !isAnswered ? 'cursor-pointer hover:bg-accent/50' : 'cursor-default'
-                  )}
-                >
-                  <RadioGroupItem value={index.toString()} id={`option-${index}`} disabled={isAnswered} />
-                  <span className="flex-1 text-base">{option}</span>
-                  {isAnswered && isCorrect && <CheckCircle className="text-green-500" />}
-                  {isAnswered && isSelected && !isCorrect && <XCircle className="text-destructive" />}
-                </Label>
-              );
-            })}
-          </RadioGroup>
-        </CardContent>
+      <div className="flex-1 flex flex-col min-h-0">
+        <Card className="flex-1 flex flex-col">
+          <CardHeader>
+              <CardTitle className="text-xl md:text-2xl leading-relaxed">{currentQuestion.question}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1">
+            <RadioGroup
+              value={selectedOption?.toString()}
+              onValueChange={(value) => !isAnswered && setSelectedOption(parseInt(value))}
+              className="space-y-4"
+            >
+              {currentQuestion.options.map((option, index) => {
+                const isCorrect = index === currentQuestion.correctOptionIndex;
+                const isSelected = index === selectedOption;
+                return (
+                  <Label
+                    key={index}
+                    htmlFor={`option-${index}`}
+                    className={cn(
+                      "flex items-center space-x-4 rounded-md border p-4 transition-all",
+                      isAnswered && isCorrect ? 'border-green-500 bg-green-500/10' : '',
+                      isAnswered && isSelected && !isCorrect ? 'border-destructive bg-destructive/10' : '',
+                      !isAnswered ? 'cursor-pointer hover:bg-accent/50' : 'cursor-default'
+                    )}
+                  >
+                    <RadioGroupItem value={index.toString()} id={`option-${index}`} disabled={isAnswered} />
+                    <span className="flex-1 text-base">{option}</span>
+                    {isAnswered && isCorrect && <CheckCircle className="text-green-500" />}
+                    {isAnswered && isSelected && !isCorrect && <XCircle className="text-destructive" />}
+                  </Label>
+                );
+              })}
+            </RadioGroup>
+          </CardContent>
 
-        {isAnswered && (
-          <CardFooter className="flex-col items-start">
-             <Alert className="w-full">
-                <AlertTitle className={cn(selectedOption === currentQuestion.correctOptionIndex ? 'text-green-600' : 'text-destructive')}>
-                  {selectedOption === currentQuestion.correctOptionIndex ? 'Correct!' : 'Not Quite!'}
-                </AlertTitle>
-                <AlertDescription>{currentQuestion.explanation}</AlertDescription>
-            </Alert>
-          </CardFooter>
-        )}
-      </Card>
+          {isAnswered && (
+            <CardFooter className="flex-col items-start">
+               <Alert className="w-full">
+                  <AlertTitle className={cn(selectedOption === currentQuestion.correctOptionIndex ? 'text-green-600' : 'text-destructive')}>
+                    {selectedOption === currentQuestion.correctOptionIndex ? 'Correct!' : 'Not Quite!'}
+                  </AlertTitle>
+                  <AlertDescription>{currentQuestion.explanation}</AlertDescription>
+              </Alert>
+            </CardFooter>
+          )}
+        </Card>
       
-      <div className="mt-6 flex justify-end">
-        {!isAnswered ? (
-          <Button onClick={handleAnswerSubmit} disabled={selectedOption === null}>Check Answer</Button>
-        ) : (
-          <Button onClick={handleNextQuestion}>
-            {currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
-          </Button>
-        )}
+        <div className="mt-4 flex justify-end">
+          {!isAnswered ? (
+            <Button onClick={handleAnswerSubmit} disabled={selectedOption === null}>Check Answer</Button>
+          ) : (
+            <Button onClick={handleNextQuestion}>
+              {currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
