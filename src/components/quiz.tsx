@@ -53,9 +53,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
     } else {
       setIsFinished(true);
       const percentage = (score / questions.length) * 100;
-      if (percentage >= PASS_PERCENTAGE) {
-        completeLevel(level.id, percentage);
-      }
+      completeLevel(level.id, percentage);
     }
   };
   
@@ -92,7 +90,7 @@ export function Quiz({ level, onQuizComplete }: QuizProps) {
             <CardContent>
                 <p className="text-4xl font-bold">{Math.round(finalScorePercentage)}%</p>
                 <p className="text-muted-foreground">You answered {score} out of {questions.length} questions correctly.</p>
-                <p className="mt-4">{passed ? "Great job! You've unlocked new knowledge." : `You need ${PASS_PERCENTAGE}% to pass. Don't give up!`}</p>
+                <p className="mt-4">{passed ? "Great job! You've unlocked new knowledge." : `You need ${PASS_PERCENTAGE}% to pass, but you can continue exploring.`}</p>
             </CardContent>
             <CardFooter>
                 <Button onClick={onQuizComplete} className="w-full">
